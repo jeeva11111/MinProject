@@ -98,11 +98,14 @@ namespace MinProject.Models
         public virtual State? State { get; set; }
     }
 
-    public class RegisterModel
+    public class Register
     {
         public string? UserName { get; set; }
+        [Required(ErrorMessage = "Enter the Email")]
         public string? Email { get; set; }
+        [Required(ErrorMessage = "Enter the Password")]
         public string? Password { get; set; }
+        [Required(ErrorMessage = "Enter the Comform Password"), Compare("Password")]
         public string? ComformPassword { get; set; }
     }
 
