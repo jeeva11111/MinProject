@@ -1,0 +1,54 @@
+﻿@using MinProject.Models.Customer;
+@model CustomerModel;
+
+<form method="post" >
+
+    <table class="d-lg-table table-bordered">
+        <thead>
+            <tr>
+                <th>CustomerID</th>
+                <th>ContactName</th>
+                <th>City</th>
+                <th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Customers)
+            {
+                <tr>
+                    <td>@item.CustomerID</td>
+                    <td>@item.ContactName</td>
+                    <td>@item.City</td>
+                    <td>@item.Country</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <hr />
+    <table class="card">
+        <tr>
+            @for (int i = 0; i < Model.PageCount; i++)
+            {
+                <td>
+                    @if (i != Model.CurrentPageIndex)
+                    {
+                        <a href="javascript:pageClick(@i)">@i</a>
+                    }
+                    else
+                    {
+                        <span>@i</span>
+                    }
+                </td>
+            }
+        </tr>
+    </table>
+    <input type="hidden" id="hfCurrentPageIndex" name="currentPageIndex" />
+</form>
+
+<script>
+    function pageClick(index) {
+        document.getElementById("hfCurrentPageIndex").value = index;
+        document.forms[0].submit();
+    }
+</script>

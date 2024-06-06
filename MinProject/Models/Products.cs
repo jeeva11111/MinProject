@@ -10,7 +10,9 @@ namespace MinProject.Models
     public class User
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        public Guid Id { get; set; } = new Guid();
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? PasswordHash { get; set; }
@@ -22,7 +24,8 @@ namespace MinProject.Models
     public class Products
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; } = new Guid();
         public string? Name { get; set; }
         public string? Description { get; set; }
         [NotMapped]
@@ -30,14 +33,16 @@ namespace MinProject.Models
         public byte[]? Data { get; set; }
         public string? FileName { get; set; }
         public bool IsDeleted { get; set; }
-
+        public int Stock { get; set; }
         public virtual Order? Order { get; set; }
     }
 
     public class Order
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        public Guid Id { get; set; } = new Guid();
         public string? Name { get; set; }
         public Guid UserId { get; set; }
         [ForeignKey("UserId")]
@@ -59,7 +64,9 @@ namespace MinProject.Models
     public class Notifaction
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        public Guid Id { get; set; } = new Guid();
 
         public virtual User? User { get; set; }
         public Guid UserId { get; set; }
@@ -72,7 +79,7 @@ namespace MinProject.Models
     public class State
     {
         [Key]
-        public Guid StateCodePk { get; set; }
+        public Guid StateCodePk { get; set; } = new Guid();
         public Guid CountryCodeFk { get; set; }
         [ForeignKey("CountryCodeFk")]
         public virtual Country? Country { get; set; }
@@ -83,7 +90,7 @@ namespace MinProject.Models
     public class City
     {
         [Key]
-        public Guid CityCodePk { get; set; }
+        public Guid CityCodePk { get; set; } = new Guid();
         public Guid StateCodeFk { get; set; }
         [ForeignKey("StateCodeFk")]
         public virtual State? State { get; set; }
@@ -93,14 +100,14 @@ namespace MinProject.Models
     public class Country
     {
         [Key]
-        public Guid CountryCodePk { get; set; }
+        public Guid CountryCodePk { get; set; } = new Guid();
         public string? CountryName { get; set; }
         public virtual State? State { get; set; }
     }
 
     public class Register
     {
-        public string? UserName { get; set; }
+        public string? UserName { get; set; } 
         [Required(ErrorMessage = "Enter the Email")]
         public string? Email { get; set; }
         [Required(ErrorMessage = "Enter the Password")]

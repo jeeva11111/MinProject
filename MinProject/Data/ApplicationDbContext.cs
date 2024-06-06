@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MinProject.Models;
+using MinProject.Models.Customer;
+using MinProject.Models.Student;
+using MinProject.Views.Message;
 
 namespace MinProject.Data
 {
@@ -18,10 +21,18 @@ namespace MinProject.Data
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
 
+        public DbSet<Student> Students { get; set; }
+
+        public DbSet<MessageModel> Messages { get; set; }
+
+        public DbSet<Customer> Customers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
         }
+
+
     }
 
 }

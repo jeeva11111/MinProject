@@ -11,14 +11,16 @@ namespace MinProject.Controllers.Account
     {
         private readonly IFunctions _functions;
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public AccountController(IFunctions functions, ApplicationDbContext context)
+        public AccountController(IFunctions functions, ApplicationDbContext context, IHttpContextAccessor contextAccessor)
         {
             _functions = functions;
             _context = context;
+            _contextAccessor = contextAccessor;
         }
 
- 
+
 
         [HttpGet]
         public IActionResult Login()
@@ -29,10 +31,19 @@ namespace MinProject.Controllers.Account
         [HttpPost]
         public IActionResult Login(Login login)
         {
+            var userId = _contextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _context.Users.SingleOrDefault(u => u.Email == login.Email);
+            if (user != null)
+            {
+                _contextAccessor.HttpContext.Session.SetString("UserId", user.Id.ToString());
+                _contextAccessor.HttpContext.Session.SetString("UserName", user.Name);
+            }
+
             var isValid = _functions.IsValidUser(login.Email, login.Password);
             if (isValid)
             {
-                return RedirectToAction("Index", "Product");
+                return RedirectToAction("Index", "Products");
             }
 
             ModelState.AddModelError("", "Invalid user inputs");
@@ -65,7 +76,7 @@ namespace MinProject.Controllers.Account
                         Name = register.UserName,
                         PasswordHash = passwordHash,
                         PasswordSalt = passwordSalt,
-                     
+
                     });
 
                     _context.SaveChanges();
@@ -78,6 +89,13 @@ namespace MinProject.Controllers.Account
             }
 
             return View(register);
+        }
+        [HttpGet]
+        public IActionResult LogOut()
+        {
+            _contextAccessor.HttpContext.Session.Clear();
+            Response.Cookies.Delete("Logger");
+            return RedirectToAction("Login", "Account");
         }
     }
 }

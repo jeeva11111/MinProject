@@ -1,1 +1,264 @@
-﻿
+﻿@{
+    var users = ViewBag.Users as List<User>;
+    var currentUserId = Context.Session.GetString("UserId");
+}
+
+<h1>Users</h1>
+<ul id="userList">
+    @foreach (var user in users)
+    {
+        if (user != null)
+        {
+            <li id="user-@user.Id">
+                <span class="user-status @(user.Id.ToString() == currentUserId ? "current-user" : "other-user")"></span>
+                @user.Name
+            </li>
+        }
+    }
+</ul>
+
+<h2>Send a Message</h2>
+<form id="messageForm">
+    <select id="receiverId">
+        @foreach (var user in users)
+        {
+            <option value="@user.Id">@user.Name</option>
+        }
+    </select>
+    <textarea id="messageContent"></textarea>
+    <button type="submit">Send</button>
+</form>
+
+<div id="messagesList"></div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/ChatHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.start().then(function () {
+                console.log("SignalR Connected");
+            }).catch(function (err) {
+                console.error(err.toString());
+            });
+
+            $("#messageForm").submit(function (event) {
+                event.preventDefault();
+                const receiverId = $("#receiverId").val();
+                const messageContent = $("#messageContent").val();
+
+                connection.invoke("SendMessage", receiverId, messageContent).catch(function (err) {
+                    console.error(err.toString());
+                });
+            });
+
+            connection.on("ReceiveMessage", function (senderId, receiverId, message) {
+                const currentUser = '@Context.Session.GetString("UserId")';
+                let messageItem = $("<div></div>").text(message);
+
+                if (senderId === currentUser) {
+                    messageItem.addClass("sent-message");
+                    messageItem.prepend(`You: `);
+                } else {
+                    messageItem.addClass("received-message");
+                    messageItem.prepend(`User ${senderId}: `);
+                }
+
+                $("#messagesList").append(messageItem);
+            });
+
+            connection.on("UpdateUserList", function (users) {
+                $("#userList").empty();
+                users.forEach(user => {
+                    let userItem = `<li><span class="user-status other-user"></span>${user}</li>`;
+                    $("#userList").append(userItem);
+                });
+            });
+
+            connection.on("UserJoined", function (userId, userName) {
+                let userItem = `<li id="user-${userId}"><span class="user-status other-user"></span>${userName}</li>`;
+                $("#userList").append(userItem);
+            });
+
+            connection.on("UserLeft", function (userId, userName) {
+                $(`#user-${userId}`).remove();
+            });
+
+            connection.onclose(async () => {
+                await startConnection();
+            });
+
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("SignalR Reconnected");
+                } catch (err) {
+                    console.log(err);
+                    setTimeout(startConnection, 5000);
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .user-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .current-user {
+            background-color: green;
+        }
+
+        .other-user {
+            background-color: red;
+        }
+
+        .sent-message {
+            text-align: right;
+            background-color: #DCF8C6;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        .received-message {
+            text-align: left;
+            background-color: #ECECEC;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+    </style>
+}
+
+
+
+
+@*
+<h1>Users</h1>
+<ul>
+    @foreach (var user in users)
+    {
+        <li>
+            <span class="user-status @(user.Id.ToString() == currentUserId ? "current-user" : "other-user")"></span>
+            @user.Name
+        </li>
+    }
+</ul>
+
+<h2>Send a Message</h2>
+<form id="messageForm">
+    <select id="receiverId">
+        @foreach (var user in users)
+        {
+            <option value="@user.Id">@user.Name</option>
+        }
+    </select>
+    <textarea id="messageContent"></textarea>
+    <button type="submit">Send</button>
+</form>
+
+<div id="messagesList"></div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/ChatHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.start().then(function () {
+                console.log("SignalR Connected");
+            }).catch(function (err) {
+                console.error(err.toString());
+            });
+
+            $("#messageForm").submit(function (event) {
+                event.preventDefault();
+                const receiverId = $("#receiverId").val();
+                const messageContent = $("#messageContent").val();
+
+                connection.invoke("SendMessage", receiverId, messageContent).catch(function (err) {
+                    console.error(err.toString());
+                });
+            });
+
+            connection.on("ReceiveMessage", function (senderId, receiverId, message) {
+                const currentUser = '@Context.Session.GetString("UserId")';
+                let messageItem = $("<div></div>").text(message);
+
+                if (senderId === currentUser) {
+                    messageItem.addClass("sent-message");
+                    messageItem.prepend(`You: `);
+                } else {
+                    messageItem.addClass("received-message");
+                    messageItem.prepend(`User ${senderId}: `);
+                }
+
+                $("#messagesList").append(messageItem);
+            });
+
+            connection.onclose(async () => {
+                await startConnection();
+            });
+
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("SignalR Reconnected");
+                } catch (err) {
+                    console.log(err);
+                    setTimeout(startConnection, 5000);
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .user-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .current-user {
+            background-color: green;
+        }
+
+        .other-user {
+            background-color: red;
+        }
+
+        .sent-message {
+            text-align: right;
+            background-color: #DCF8C6;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        .received-message {
+            text-align: left;
+            background-color: #ECECEC;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+    </style>
+}
+
+*@

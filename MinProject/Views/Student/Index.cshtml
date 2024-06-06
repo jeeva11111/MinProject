@@ -1,0 +1,114 @@
+﻿ @using MinProject.ViewModel;
+@model ViewStudentModel;
+
+
+<table class="table table-border">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var items in Model.Students)
+        {
+            <tr>
+                <td> @items.Id</td>
+                <td> @items.Name</td>
+                <td> @items.Age</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<div id="paginaction">
+
+    <button id="prevPage" @if (Model.PageNumber <= 1)
+    {
+        <text>disabled</text>
+    }>Previous</button>
+    <span>Page @Model.PageNumber of @((Model.TotalStudents + Model.PageSize - 1) / Model.PageSize)</span>
+    <button id="nextPage" @if (Model.PageNumber >= ((Model.TotalStudents + Model.PageSize - 1) / Model.PageSize))
+    {
+        <text>disabled</text>
+    }>Next</button>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#prevPage').click(function () {
+                var pageNumber = @Model.PageNumber;
+                if (pageNumber > 1) {
+                    window.location.href = '@Url.Action("Index", "Student")?pageNumber=' + (pageNumber - 1) + '&pageSize=@Model.PageSize';
+                }
+            });
+
+            $('#nextPage').click(function () {
+                var pageNumber = @Model.PageNumber;
+                var totalPages = Math.ceil(@Model.TotalStudents / @Model.PageSize);
+                                                                                                                if (pageNumber < totalPages) {
+                    window.location.href = '@Url.Action("Index", "Student")?pageNumber=' + (pageNumber + 1) + '&pageSize=@Model.PageSize';
+                }
+            });
+        });
+    </script>
+}
+
+
+
+<div>
+    <h1>Times</h1>
+    <div id="count-productss"></div>
+</div>
+
+
+
+<div id="partialView"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var currentStore = '';
+
+        $.ajax({
+            url: '/Student/StudentList',
+            type: 'GET',
+            success: function (res) {
+                // Assuming res.message contains the list of students
+                $.each(res.message, function (idx, val) {
+                    currentStore += `<h2>${val.name}</h2>`;
+                });
+                $("#count-productss").html(currentStore);
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+            }
+        });
+    });
+
+
+
+
+    $.ajax({
+        url: '/Student/StudentId',
+        type: 'GET',
+        success: function (res) {
+            $("#partialView").html(res);
+        },
+        error: function (xhr, status, error) {
+            alert(xhr.responseText);
+        }
+    }
+            })
+
+</script>
+
+
+
+
+@Html.Partial("_ProductsList")

@@ -1,0 +1,27 @@
+﻿
+<div>
+    <h1>Times</h1>
+    <div id="count-products"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var currentStore = '';
+
+        $.ajax({
+            url: '/Student/StudentList',
+            type: 'GET',
+            success: function (res) {
+                // Assuming res.message contains the list of students
+                $.each(res.message, function (idx, val) {
+                    currentStore += `<h2>${val.id}</h2>`;
+                });
+                $("#count-products").html(currentStore);
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+            }
+        });
+    });
+</script>
