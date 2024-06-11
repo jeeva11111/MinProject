@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MinProject.Data;
+using MinProject.Models.FormData;
 using MinProject.Views.GenerateDynamicdataViews;
 
 namespace MinProject.Controllers.GenerateDynamicdata
@@ -23,7 +24,32 @@ namespace MinProject.Controllers.GenerateDynamicdata
             }
             return View();
         }
+        [HttpGet]
+        public IActionResult CountryResult()
+        {
+            var students = _context.Students.ToList();
 
+            return Json(new { response = students });
+        }
+
+        [HttpPost]
+        public IActionResult DynamicFormITems([FromBody] List<DynamicDataModel> model)
+        {
+            if (model == null || !model.Any())
+            {
+                return BadRequest("Unable to read the data");
+            }
+
+            foreach (var item in model)
+            {
+                item.option = string.Join(",", item.optionts);
+            }
+
+            _context.DynamicDataModels.AddRange(model);
+            _context.SaveChanges();
+
+            return Ok();
+        }
 
     }
 }

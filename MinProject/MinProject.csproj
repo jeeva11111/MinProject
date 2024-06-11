@@ -23,7 +23,6 @@
   <ItemGroup>
     <Folder Include="Controllers\Customer\" />
     <Folder Include="NewFolder\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

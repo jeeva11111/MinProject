@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MinProject.Models;
 using MinProject.Models.Customer;
+using MinProject.Models.FormData;
 using MinProject.Models.Student;
 using MinProject.Views.Message;
 
@@ -26,6 +27,8 @@ namespace MinProject.Data
         public DbSet<MessageModel> Messages { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<DynamicDataModel> DynamicDataModels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MinProject.Controllers.Objects;
 using MinProject.Data;
 using MinProject.Functions.AccountFunctions;
+using MinProject.Services;
 using MinProject.SignalRFun;
 
 
@@ -21,8 +22,12 @@ builder.Services.AddSingleton<PresenceTracker>();
 builder.Services.AddTransient<IFunctions, Functions>();
 
 builder.Services.AddScoped<IStudentInterface, StudentRepository>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemServies, ItemServies>();
 //builder.Services.AddScoped<ConnectionMapping>();
 builder.Services.AddHttpContextAccessor();
+
+
 
 builder.Services.AddSession(x =>
 {

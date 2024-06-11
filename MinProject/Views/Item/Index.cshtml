@@ -1,0 +1,75 @@
+﻿@using MinProject.Models.Student;
+@model IEnumerable<Student>
+
+<button class="btn btn-outline-secondary" onclick="showModel('create',null)">add Members</button>
+
+
+
+<div class="container py-5">
+    <!-- Start -->
+    <!-- Third Row [Profiles]-->
+    <h2 class="font-weight-bold mb-2">Active Profiles</h2>
+    <p class="font-italic text-muted mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
+
+    <div class="row pb-5 mb-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <!-- Card-->
+
+                <div class="card rounded shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <div class="bg-primary px-5 py-4 text-center card-img-top">
+                            <img src="https://d19m59y37dris4.cloudfront.net/university/1-1-1/img/teacher-4.jpg" alt="..." width="100" class="rounded-circle mb-2 img-thumbnail d-block mx-auto">
+                            <h5 class="text-white mb-0">@item.Name</h5>
+                            <p class="small text-white mb-0">@item.Age</p>
+                        </div>
+                        <div class="p-4 d-flex justify-content-center">
+                            <ul class="list-inline mb-0">
+                                <li class="list-inline-item">
+                                    <button class="btn btn-outline-danger" onclick="DeleteModel(@item.Id)">Delete</button>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a class="btn btn-outline-secondary" onclick="EditModel('Edit',@item.Id)">Edit</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+
+</div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="itemModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="btn-close" data-dismiss="#itemModal" aria-label="Close" onclick="HideModel()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" id="itemId" name="Id" />
+                    <div class="form-group">
+                        <lable>Name : </lable>
+                        <input type="text" placeholder="Name" name="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Age :</label>
+                        <input type="number" max="100" min="14" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="#itemModal" onclick="HideModel()">Close</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

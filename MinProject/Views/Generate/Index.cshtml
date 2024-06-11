@@ -2,7 +2,6 @@
 @model IndexPage
 
 
-
 <div class="row">
     <table class="table table-borderless col-6" id="gen-table">
         <thead>
@@ -11,25 +10,26 @@
                 <th>Column Name </th>
                 <th>Examples </th>
                 <th>Options</th>
+                <th>types</th>
             </tr>
         </thead>
-        <hr />
         <tbody>
         </tbody>
     </table>
-
 </div>
-
 
 <div class="col-1">
     <div class="row-cols-1">
         <form id="gen-form">
             <div class="form-group">
                 <input type="number" class="form-control" min="0" max="10" autocomplete="off" autofocus name="numberInput" />
+                <span id="number-validNumber" style="display:none; font-size:10px;">Enter the Number !!!</span>
             </div>
             <div class="form-group mt-4">
                 <input type="submit" class="btn btn-outline-primary" style="border-width: thin; border-radius: 5px;" value="Add" />
             </div>
         </form>
+        <button id="submit-data" class="btn btn-outline-primary mt-3" style="display:none">Submit</button>
+
     </div>
 </div>
