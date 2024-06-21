@@ -2,8 +2,10 @@
 using MinProject.Data;
 using MinProject.Functions.AccountFunctions;
 using MinProject.Models;
+using NuGet.Common;
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace MinProject.Controllers.Account
 {
@@ -12,12 +14,14 @@ namespace MinProject.Controllers.Account
         private readonly IFunctions _functions;
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IFunctions functions, ApplicationDbContext context, IHttpContextAccessor contextAccessor)
+        public AccountController(IFunctions functions, ApplicationDbContext context, IHttpContextAccessor contextAccessor, IConfiguration configuration)
         {
             _functions = functions;
             _context = context;
             _contextAccessor = contextAccessor;
+            _configuration = configuration;
         }
 
 
@@ -36,8 +40,12 @@ namespace MinProject.Controllers.Account
             var user = _context.Users.SingleOrDefault(u => u.Email == login.Email);
             if (user != null)
             {
+                var token = JwtTokenGen.JwtHelper.GenerateJwtToken(login, _configuration);
+
+                _contextAccessor.HttpContext.Session.SetString("JwtToken", token);
                 _contextAccessor.HttpContext.Session.SetString("UserId", user.Id.ToString());
                 _contextAccessor.HttpContext.Session.SetString("UserName", user.Name);
+                Console.WriteLine($"Generated JWT Token: {token}");
             }
 
             var isValid = _functions.IsValidUser(login.Email, login.Password);
@@ -49,6 +57,7 @@ namespace MinProject.Controllers.Account
             ModelState.AddModelError("", "Invalid user inputs");
             return View(login);
         }
+
 
         [HttpGet]
         public IActionResult Register()
@@ -90,6 +99,8 @@ namespace MinProject.Controllers.Account
 
             return View(register);
         }
+
+
         [HttpGet]
         public IActionResult LogOut()
         {
@@ -97,5 +108,13 @@ namespace MinProject.Controllers.Account
             Response.Cookies.Delete("Logger");
             return RedirectToAction("Login", "Account");
         }
+
+        [HttpGet]
+        public IActionResult localPort()
+        {
+            ModelState.AddModelError("", "unable to read");
+            return Ok("unable to read");
+        }
+
     }
 }

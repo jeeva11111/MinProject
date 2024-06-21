@@ -116,10 +116,13 @@ function GetCountryList() {
 
 
 function showModel(action, id) {
- //   $("#itemForm")[0].reset()
-    $("#itemModal").modal('show')
-    $(".modal-title").text('Add model');
-    $("#saveButton").text('save')
+    //   $("#itemForm")[0].reset()
+    if (action === 'create') {
+        $("#itemModal").modal('show')
+        $(".modal-title").text('Add model');
+        $("#saveButton").text('save')
+    }
+         
 }
 
 function HideModel() {
